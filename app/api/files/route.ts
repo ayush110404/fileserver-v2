@@ -1,7 +1,7 @@
 // app/api/files/route.ts - For listing files
 // app/api/files/route.ts
-import { NextRequest, NextResponse } from 'next/server';
 import { getDirectoryContents, initFileSystem } from '@/lib/file-system';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   // Ensure file directory exists

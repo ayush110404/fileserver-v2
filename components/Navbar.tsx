@@ -1,74 +1,66 @@
-// app/components/Navbar.tsx
-'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  Bell, 
+  Search, 
+  Settings, 
+  Menu as MenuIcon, 
+  User,
+  FileIcon
+} from 'lucide-react';
 
-export default function Navbar() {
-  const pathname = usePathname();
-  
-  return (
-    <nav className="bg-blue-600 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-white text-xl font-bold">
-                Home File Server
-              </Link>
-            </div>
-            <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <Link
-                href="/"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  pathname === '/' 
-                    ? 'border-white text-white' 
-                    : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300'
-                }`}
-              >
-                Files
-              </Link>
-              <Link
-                href="/upload"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  pathname === '/upload' 
-                    ? 'border-white text-white' 
-                    : 'border-transparent text-blue-100 hover:text-white hover:border-blue-300'
-                }`}
-              >
-                Upload
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Mobile navigation */}
-      <div className="sm:hidden">
-        <div className="pt-2 pb-3 space-y-1">
-          <Link
-            href="/"
-            className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-              pathname === '/' 
-                ? 'bg-blue-700 border-white text-white' 
-                : 'border-transparent text-blue-100 hover:bg-blue-700 hover:text-white'
-            }`}
-          >
-            Files
-          </Link>
-          <Link
-            href="/upload"
-            className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-              pathname === '/upload' 
-                ? 'bg-blue-700 border-white text-white' 
-                : 'border-transparent text-blue-100 hover:bg-blue-700 hover:text-white'
-            }`}
-          >
-            Upload
-          </Link>
-        </div>
-      </div>
-    </nav>
-  );
+interface NavbarProps {
+  onToggleSidebar: () => void;
 }
 
+export function Navbar({ onToggleSidebar }: NavbarProps) {
+  return (
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-16 items-center px-4 md:px-6">
+        <Button variant="ghost" size="icon" className="md:hidden mr-2" onClick={onToggleSidebar}>
+          <MenuIcon className="h-6 w-6" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
+        
+        <div className="flex items-center gap-2 mr-6">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="bg-primary rounded-md p-1">
+              <FileIcon className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="font-bold text-lg hidden md:inline-block">FileManager</span>
+          </Link>
+        </div>
+        
+        <div className="flex-1 flex items-center gap-4 md:gap-8 mx-4">
+          <form className="hidden md:flex-1 md:flex max-w-md">
+            <div className="relative w-full">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search files..."
+                className="w-full pl-8 bg-background"
+              />
+            </div>
+          </form>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon">
+            <Bell className="h-5 w-5" />
+            <span className="sr-only">Notifications</span>
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Settings className="h-5 w-5" />
+            <span className="sr-only">Settings</span>
+          </Button>
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <User className="h-5 w-5" />
+            <span className="sr-only">Profile</span>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}

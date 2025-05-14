@@ -3,7 +3,7 @@
 // import fs from 'fs';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
-import { BreadcrumbItem, FileInfo } from '@/types';
+import { FileInfo } from '@/types';
 
 // Base directory for all files
 export const FILE_DIRECTORY = process.env.FILE_STORAGE_PATH || path.join(process.cwd(), 'server-files');
@@ -106,32 +106,4 @@ export const deleteFileOrDirectory = async (itemPath: string): Promise<void> => 
     console.error('Error deleting item:', error);
     throw error;
   }
-};
-
-// Helper function to get breadcrumb items from path
-export const getBreadcrumbs = (currentPath: string): BreadcrumbItem[] => {
-  const parts = currentPath.split('/').filter(Boolean);
-  const breadcrumbs: BreadcrumbItem[] = [{ name: 'Home', path: '' }];
-  
-  let currentBreadcrumbPath = '';
-  for (const part of parts) {
-    currentBreadcrumbPath += `/${part}`;
-    breadcrumbs.push({
-      name: part,
-      path: currentBreadcrumbPath.slice(1) // Remove leading slash
-    });
-  }
-  
-  return breadcrumbs;
-};
-
-// Helper to format file size
-export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-  
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };

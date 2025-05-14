@@ -1,146 +1,146 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { FileInfo } from '@/types';
-
-// Utility function to format file sizes
-function formatFileSize(size: number): string {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-}
+import { Button } from '@/components/ui/button';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { 
+  Loader2, 
+  Folder, 
+  File as FileIcon, 
+  Download, 
+  Trash2, 
+  MoreVertical 
+} from 'lucide-react';
+import { formatFileSize, formatDate } from '@/utils/file-utils';
 
 interface FileListProps {
   files: FileInfo[];
-  currentPath: string;
-  onRefresh: () => void;
+  loading: boolean;
+  onDirectoryClick: (path: string) => void;
+  onDeleteClick: (file: FileInfo) => void;
+  deleteInProgress: string | null;
 }
 
-export default function FileList({ files, currentPath, onRefresh }: FileListProps) {
-  const [deleteInProgress, setDeleteInProgress] = useState<string | null>(null);
-  const router = useRouter();
-  
-  const handleDelete = async (file: FileInfo) => {
-    if (confirm(`Are you sure you want to delete ${file.name}?`)) {
-      try {
-        setDeleteInProgress(file.path);
-        const response = await fetch('/api/delete', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ path: file.path }),
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to delete');
-        }
-        
-        onRefresh();
-      } catch (error) {
-        console.error('Error deleting item:', error);
-        alert('Failed to delete item');
-      } finally {
-        setDeleteInProgress(null);
-      }
-    }
-  };
-  
-  const handleDirectoryClick = (path: string) => {
-    // Navigate to the directory page
-    router.push(`/files/${path}`);
-  };
-  
+export function FileList({ 
+  files, 
+  loading, 
+  onDirectoryClick, 
+  onDeleteClick, 
+  deleteInProgress 
+}: FileListProps) {
+  // Render loading skeletons
+  const renderTableSkeletons = () => (
+    Array(5).fill(0).map((_, index) => (
+      <TableRow key={index}>
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </TableCell>
+        <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse" /></TableCell>
+        <TableCell><div className="h-4 w-24 bg-gray-200 rounded animate-pulse" /></TableCell>
+        <TableCell className="text-right">
+          <div className="h-8 w-16 bg-gray-200 rounded animate-pulse ml-auto" />
+        </TableCell>
+      </TableRow>
+    ))
+  );
+
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Size
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Last Modified
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {files.map((file) => (
-            <tr key={file.path} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[40%]">Name</TableHead>
+          <TableHead>Size</TableHead>
+          <TableHead>Last Modified</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {loading ? (
+          renderTableSkeletons()
+        ) : files.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center text-muted-foreground h-32">
+              This folder is empty
+            </TableCell>
+          </TableRow>
+        ) : (
+          files.map((file) => (
+            <TableRow key={file.path}>
+              <TableCell>
                 {file.isDirectory ? (
-                  <button 
-                    onClick={() => handleDirectoryClick(file.path)}
-                    className="flex items-center text-blue-600 hover:text-blue-800"
+                  <Button 
+                    variant="ghost" 
+                    className="p-0 h-auto font-normal justify-start hover:bg-transparent" 
+                    onClick={() => onDirectoryClick(file.path)}
                   >
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
-                    </svg>
-                    {file.name}
-                  </button>
+                    <Folder className="h-4 w-4 text-blue-500 mr-2" />
+                    <span>{file.name}</span>
+                  </Button>
                 ) : (
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                    </svg>
-                    {file.name}
+                    <FileIcon className="h-4 w-4 text-gray-400 mr-2" />
+                    <span>{file.name}</span>
                   </div>
                 )}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {file.isDirectory ? '—' : formatFileSize(file.size)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {new Date(file.modifiedAt).toLocaleString()}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                {file.isDirectory ? (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleDelete(file)}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {file.isDirectory ? '—' : formatFileSize(file.size || 0)}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {formatDate(file.modifiedAt)}
+              </TableCell>
+              <TableCell className="text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {!file.isDirectory && (
+                      <DropdownMenuItem asChild>
+                        <a
+                          href={`/api/download/${encodeURIComponent(file.path)}`}
+                          className="cursor-pointer flex items-center"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </a>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem 
+                      className="text-red-600 focus:text-red-600" 
+                      onClick={() => onDeleteClick(file)}
                       disabled={deleteInProgress === file.path}
-                      className="text-red-600 hover:text-red-900 disabled:opacity-50"
                     >
-                      {deleteInProgress === file.path ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex space-x-2">
-                    <a
-                      href={`/api/download/${encodeURIComponent(file.path)}`}
-                      className="text-green-600 hover:text-green-900"
-                    >
-                      Download
-                    </a>
-                    <button
-                      onClick={() => handleDelete(file)}
-                      disabled={deleteInProgress === file.path}
-                      className="text-red-600 hover:text-red-900 disabled:opacity-50"
-                    >
-                      {deleteInProgress === file.path ? 'Deleting...' : 'Delete'}
-                    </button>
-                  </div>
-                )}
-              </td>
-            </tr>
-          ))}
-          {files.length === 0 && (
-            <tr>
-              <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
-                This directory is empty
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+                      {deleteInProgress === file.path ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4 mr-2" />
+                      )}
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
+      </TableBody>
+    </Table>
   );
 }
