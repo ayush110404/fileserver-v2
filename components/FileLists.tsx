@@ -1,10 +1,16 @@
-// app/components/FileList.tsx
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FileInfo } from '@/types';
-// import { formatFileSize } from '@/lib/file-system';
+
+// Utility function to format file sizes
+function formatFileSize(size: number): string {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
 
 interface FileListProps {
   files: FileInfo[];
@@ -14,6 +20,7 @@ interface FileListProps {
 
 export default function FileList({ files, currentPath, onRefresh }: FileListProps) {
   const [deleteInProgress, setDeleteInProgress] = useState<string | null>(null);
+  const router = useRouter();
   
   const handleDelete = async (file: FileInfo) => {
     if (confirm(`Are you sure you want to delete ${file.name}?`)) {
@@ -41,6 +48,11 @@ export default function FileList({ files, currentPath, onRefresh }: FileListProp
     }
   };
   
+  const handleDirectoryClick = (path: string) => {
+    // Navigate to the directory page
+    router.push(`/files/${path}`);
+  };
+  
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <table className="min-w-full divide-y divide-gray-200">
@@ -65,12 +77,15 @@ export default function FileList({ files, currentPath, onRefresh }: FileListProp
             <tr key={file.path} className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap">
                 {file.isDirectory ? (
-                  <Link href={`/files/${file.path}`} className="flex items-center text-blue-600 hover:text-blue-800">
+                  <button 
+                    onClick={() => handleDirectoryClick(file.path)}
+                    className="flex items-center text-blue-600 hover:text-blue-800"
+                  >
                     <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
                     </svg>
                     {file.name}
-                  </Link>
+                  </button>
                 ) : (
                   <div className="flex items-center">
                     <svg className="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -81,7 +96,7 @@ export default function FileList({ files, currentPath, onRefresh }: FileListProp
                 )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {/* {file.isDirectory ? '—' : formatFileSize(file.size)} */}
+                {file.isDirectory ? '—' : formatFileSize(file.size)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {new Date(file.modifiedAt).toLocaleString()}
@@ -100,7 +115,7 @@ export default function FileList({ files, currentPath, onRefresh }: FileListProp
                 ) : (
                   <div className="flex space-x-2">
                     <a
-                      href={`/api/download/${file.path}`}
+                      href={`/api/download/${encodeURIComponent(file.path)}`}
                       className="text-green-600 hover:text-green-900"
                     >
                       Download

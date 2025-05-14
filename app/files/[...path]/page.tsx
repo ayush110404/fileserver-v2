@@ -1,7 +1,9 @@
+// Create a new file at app/files/[...path]/page.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import CreateDirectoryForm from '@/components/CreateDirectoryForm';
 // import FileList from '@/components/FileList';
 import Navbar from '@/components/Navbar';
@@ -22,19 +24,19 @@ function getBreadcrumbs(path: string) {
   return breadcrumbs;
 }
 
-export default function FilesPage() {
+export default function DirectoryPage() {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const pathname = usePathname();
   const router = useRouter();
+  const params = useParams();
   
-  // Extract current path from URL: /files/path/to/dir -> path/to/dir
-  const currentPath = pathname.startsWith('/files/') 
-    ? pathname.substring(7) // Remove '/files/' prefix
-    : ''; // Root directory
+  // Extract path from URL parameters
+  const pathSegments = Array.isArray(params.path) ? params.path : [params.path];
+  const currentPath = pathSegments.join('/');
   
+  // Generate breadcrumbs for navigation
   const breadcrumbs = getBreadcrumbs(currentPath);
   
   const fetchFiles = async () => {
@@ -58,9 +60,13 @@ export default function FilesPage() {
     }
   };
   
-  // Navigate to a directory
+  // Navigate to a directory path
   const navigateToPath = (path: string) => {
-    router.push(`/files/${path}`);
+    if (path === '') {
+      router.push('/');
+    } else {
+      router.push(`/files/${path}`);
+    }
   };
   
   useEffect(() => {
