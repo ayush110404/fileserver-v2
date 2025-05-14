@@ -6,7 +6,7 @@ import { promises as fsPromises } from 'fs';
 import { BreadcrumbItem, FileInfo } from '@/types';
 
 // Base directory for all files
-export const FILE_DIRECTORY = process.env.FILE_STORAGE_PAT || path.join(process.cwd(), 'server-files');
+export const FILE_DIRECTORY = process.env.FILE_STORAGE_PATH || path.join(process.cwd(), 'server-files');
 
 // Ensure the file directory exists
 export const initFileSystem = async () => {

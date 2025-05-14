@@ -1,7 +1,7 @@
 // app/api/upload/route.ts - For file uploads
 // app/api/upload/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { initFileSystem } from '@/lib/file-system';
+import { FILE_DIRECTORY, initFileSystem } from '@/lib/file-system';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     
     // Create directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'server-files', uploadPath);
+    const uploadDir = path.join(FILE_DIRECTORY, uploadPath);
     await fsPromises.mkdir(uploadDir, { recursive: true });
     
     // Write file to disk

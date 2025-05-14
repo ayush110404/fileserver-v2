@@ -1,7 +1,7 @@
 // app/api/download/[...path]/route.ts - For file downloads
 // app/api/download/[...path]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { initFileSystem } from '@/lib/file-system';
+import { FILE_DIRECTORY, initFileSystem } from '@/lib/file-system';
 import path from 'path';
 import fs from 'fs';
 
@@ -14,7 +14,7 @@ export async function GET(
   
   try {
     const filePath = params.path.join('/');
-    const fullPath = path.join(process.cwd(), 'server-files', filePath);
+    const fullPath = path.join(FILE_DIRECTORY, filePath);
     
     // Check if file exists
     const stats = await fs.promises.stat(fullPath);
