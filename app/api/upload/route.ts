@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const uploadPath = formData.get('path') as string || '';
+    const uploadPath = formData.get('path')?.toString().replaceAll("%20"," ") as string || '';
     
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });

@@ -23,12 +23,10 @@ export function BreadcrumbNav({ breadcrumbs, onNavigate }: BreadcrumbNavProps) {
               onClick={() => index==0 ? onNavigate('/') : onNavigate(crumb.path)}
               className={`${index === breadcrumbs.length - 1 ? 'font-semibold pointer-events-none' : 'hover:underline cursor-pointer'}`}
             >
-              {crumb.name}
+              {crumb.name.replace(/%20/g, ' ')}
             </BreadcrumbLink>
             {index < breadcrumbs.length - 1 && (
-              <BreadcrumbSeparator>
                 <ChevronRight className="h-4 w-4" />
-              </BreadcrumbSeparator>
             )}
           </BreadcrumbItem>
         ))}

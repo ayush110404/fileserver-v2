@@ -62,6 +62,7 @@ import {
   Grid,
   ChevronRight
 } from 'lucide-react';
+import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 
 // Utility function to format file sizes
 function formatFileSize(size: number): string {
@@ -158,8 +159,8 @@ export default function DirectoryPage() {
   
   // Navigate to a directory path
   const navigateToPath = (path: string) => {
-    if (path === '') {
-      router.push('/files');
+    if (path === '/') {
+      router.push('/');
     } else {
       router.push(`/files/${path}`);
     }
@@ -300,25 +301,10 @@ export default function DirectoryPage() {
       
       <main className="flex-1 container mx-auto p-6 max-w-7xl">
         {/* Breadcrumb navigation */}
-        <Breadcrumb className="mb-6">
-          <BreadcrumbList>
-            {breadcrumbs.map((crumb, index) => (
-              <BreadcrumbItem key={crumb.path}>
-                <BreadcrumbLink 
-                  onClick={() => navigateToPath(crumb.path)}
-                  className={`${index === breadcrumbs.length - 1 ? 'font-semibold pointer-events-none' : 'hover:underline cursor-pointer'}`}
-                >
-                  {crumb.name}
-                </BreadcrumbLink>
-                {index < breadcrumbs.length - 1 && (
-                    <ChevronRight className="h-4 w-4" />
-                  // <BreadcrumbSeparator>
-                  // </BreadcrumbSeparator>
-                )}
-              </BreadcrumbItem>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
+        <BreadcrumbNav 
+                breadcrumbs={breadcrumbs} 
+                onNavigate={navigateToPath}
+              />
         
         {/* Action buttons */}
         <div className="flex items-center justify-between mb-6">

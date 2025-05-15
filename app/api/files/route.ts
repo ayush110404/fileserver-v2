@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   
   // Get directory path from query
   const { searchParams } = new URL(request.url);
-  const dirPath = searchParams.get('path') || '';
+  const dirPath = searchParams.get('path')?.toString().replaceAll("%20"," ") || '';
   
   try {
     const files = await getDirectoryContents(dirPath);

@@ -70,7 +70,8 @@ export function FileManager({
     if (onPathChange) {
       onPathChange(path);
     } else {
-      router.push(path === '' ? basePath : `${basePath}/${path}`);
+      router.push(path === '/' ? "/" : `${basePath}/${path}`);
+
     }
   };
   
