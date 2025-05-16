@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileInfo } from '@/types';
 import { Card } from '@/components/ui/card';
-import { getBreadcrumbs } from '@/utils/file-utils';
+import { formatFileSize, formatDate, getBreadcrumbs } from '@/utils/file-utils';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { FileActions } from '@/components/FileActions';
 import { FileList } from '@/components/FileLists';
@@ -12,28 +12,19 @@ import { RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface FileManagerProps {
-  basePath?: string;
-  apiEndpoint?: string;
   currentPath: string;
-  onPathChange?: (path: string) => void;
 }
 
-export function FileManager({ 
-  basePath = '/files', 
-  apiEndpoint = '/api/files',
-  currentPath,
-  onPathChange
-}: FileManagerProps) {
+export function FileManager({ currentPath }: FileManagerProps) {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [deleteInProgress, setDeleteInProgress] = useState<string | null>(null);
-  const   [fileToDelete, setFileToDelete] = useState<FileInfo | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<FileInfo | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const router = useRouter();
-  
   const breadcrumbs = getBreadcrumbs(currentPath);
   
   const fetchFiles = async () => {
@@ -41,7 +32,7 @@ export function FileManager({
     setError(null);
     
     try {
-      const response = await fetch(`${apiEndpoint}?path=${encodeURIComponent(currentPath)}`);
+      const response = await fetch(`/api/files?path=${encodeURIComponent(currentPath)}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch files');
@@ -65,14 +56,9 @@ export function FileManager({
     }
   };
   
-  // Navigate to a directory
+  // Navigate to a directory path
   const navigateToPath = (path: string) => {
-    if (onPathChange) {
-      onPathChange(path);
-    } else {
-      router.push(path === '/' ? "/" : `${basePath}/${path}`);
-
-    }
+    router.push(path === '' ? '/files' : `/files/${path}`);
   };
   
   const handleFileUpload = async (file: File) => {
@@ -141,10 +127,6 @@ export function FileManager({
     setShowDeleteDialog(true);
   };
   
-  const handleDirectoryClick = (path: string) => {
-    navigateToPath(path);
-  };
-  
   useEffect(() => {
     fetchFiles();
   }, [currentPath]); // Re-fetch when path changes
@@ -179,7 +161,7 @@ export function FileManager({
           <FileList 
             files={files}
             loading={loading}
-            onDirectoryClick={handleDirectoryClick}
+            onDirectoryClick={navigateToPath}
             onDeleteClick={openDeleteDialog}
             deleteInProgress={deleteInProgress}
           />
@@ -187,7 +169,7 @@ export function FileManager({
           <FileGrid 
             files={files}
             loading={loading}
-            onDirectoryClick={handleDirectoryClick}
+            onDirectoryClick={navigateToPath}
             onDeleteClick={openDeleteDialog}
             deleteInProgress={deleteInProgress}
           />

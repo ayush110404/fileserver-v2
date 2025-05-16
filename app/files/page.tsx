@@ -2,7 +2,6 @@
 
 import { useParams } from 'next/navigation';
 import { FileManager } from '@/components/FileManager';
-import { AppLayout } from '@/components/app-layout';
 
 export default function FilesPage() {
   const params = useParams();
@@ -15,8 +14,16 @@ export default function FilesPage() {
   const currentPath = pathSegments.join('/');
   
   return (
+    <>
       <div className="space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Files</h1>
+          <p className="text-muted-foreground">
+            Browse and manage your files and folders
+          </p>
+        </div>
         <FileManager currentPath={currentPath} />
       </div>
+    </>
   );
 }
