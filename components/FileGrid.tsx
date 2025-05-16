@@ -56,7 +56,7 @@ export function FileGrid({
           {files.map((file) => (
             <div 
               key={file.path} 
-              className="flex flex-col items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex flex-col items-center p-4 border rounded-lg hover:bg-muted/50 transition-colors"
             >
               <div className="flex justify-end w-full mb-2">
                 <DropdownMenu>
@@ -98,7 +98,7 @@ export function FileGrid({
                   onClick={() => onDirectoryClick(file.path)}
                   className="flex flex-col items-center cursor-pointer"
                 >
-                  <Folder className="h-12 w-12 text-blue-500 mb-2" />
+                  <Folder className="h-12 w-12 text-secondary mb-2" />
                   <span className="text-sm text-center truncate w-full">{file.name}</span>
                   <span className="text-xs text-muted-foreground">Folder</span>
                 </button>

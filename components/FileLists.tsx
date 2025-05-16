@@ -79,12 +79,12 @@ export function FileList({
           </TableRow>
         ) : (
           files.map((file) => (
-            <TableRow key={file.path} className="hover:bg-accent">
+            <TableRow key={file.path} className="hover:bg-muted/50">
               <TableCell>
                 {file.isDirectory ? (
                   <Button 
                     variant="ghost" 
-                    className="p-0 h-auto font-normal justify-start" 
+                    className="p-0 h-auto font-normal justify-start cursor-pointer" 
                     onClick={() => onDirectoryClick(file.path)}
                   >
                     <Folder className="h-4 w-4 text-primary mr-2" />
