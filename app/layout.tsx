@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'BotSum',
@@ -25,6 +26,7 @@ export default function RootLayout({
           <div className="min-h-screen bg-background">
             {children}
           </div>
+          <Toaster/>
         </ThemeProvider>
       </body>
     </html>
