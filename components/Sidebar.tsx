@@ -8,20 +8,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { 
-  Home, 
-  FolderOpen, 
-  Star, 
-  Clock, 
-  Trash, 
   Cloud, 
-  Settings, 
-  HelpCircle,
   ChevronRight,
-  Folder,
   FolderOpenIcon,
   FolderIcon,
-  Plus,
-  File
+  Plus
 } from 'lucide-react';
 
 // Define the file/folder structure type
@@ -43,17 +34,6 @@ export function Sidebar({ isOpen, basePath = '/files', apiEndpoint = '/api/files
   const [folderStructure, setFolderStructure] = useState<FileNode[]>([]);
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Define the main navigation items
-  const mainNavItems = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'My Files', href: '/files', icon: FolderOpen },
-    { name: 'Favorites', href: '/favorites', icon: Star },
-    { name: 'Recent', href: '/recent', icon: Clock },
-    { name: 'Trash', href: '/trash', icon: Trash },
-    { name: 'Settings', href: '/settings', icon: Settings },
-    { name: 'Help', href: '/help', icon: HelpCircle },
-  ];
 
   // Fetch the folder structure
   useEffect(() => {
@@ -171,7 +151,7 @@ export function Sidebar({ isOpen, basePath = '/files', apiEndpoint = '/api/files
   // Render a folder and its children recursively
   const renderFolder = (folder: FileNode, level = 0) => {
     const isExpanded = expandedFolders[folder.path] || false;
-    const isActive = pathname === `${basePath}/${folder.path}` || pathname === `${basePath}${folder.path}`;
+    const isActive = pathname.replace(/%20/g, ' ') === `${basePath}/${folder.path}` || pathname.replace(/%20/g, ' ') === `${basePath}${folder.path}`;
     
     return (
       <Collapsible
@@ -240,27 +220,7 @@ export function Sidebar({ isOpen, basePath = '/files', apiEndpoint = '/api/files
       isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
     )}>
       <ScrollArea className="h-full py-20">
-        {/* <div className="px-3 py-2">
-          <nav className="space-y-1">
-            {mainNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href || 
-                (item.href !== '/' && pathname.startsWith(item.href));
-              
-              return (
-                <Link key={item.name} href={item.href}>
-                  <Button
-                    variant={isActive ? "secondary" : "ghost"}
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <Icon className="mr-2 h-4 w-4" />
-                    {item.name}
-                  </Button>
-                </Link>
-              );
-            })}
-          </nav>
-        </div> */}
+        
 
         
         {/* Folder structure section */}

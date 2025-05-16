@@ -3,13 +3,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
-  Bell, 
   Search, 
-  Settings, 
   Menu as MenuIcon, 
-  User,
-  FileIcon
+  ServerCog
 } from 'lucide-react';
+import { ThemeToggle } from './theme-toggle';
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -27,9 +25,10 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
         <div className="flex items-center gap-2 mr-6">
           <Link href="/" className="flex items-center gap-2">
             <div className="bg-primary rounded-md p-1">
-              <FileIcon className="h-5 w-5 text-primary-foreground" />
+            <ServerCog className="h-5 w-5 text-primary-foreground" />
+              {/* <FileIcon className="h-5 w-5 text-primary-foreground" /> */}
             </div>
-            <span className="font-bold text-lg hidden md:inline-block">FileManager</span>
+            <span className="font-bold text-lg hidden md:inline-block">Pithos</span>
           </Link>
         </div>
         
@@ -47,18 +46,7 @@ export function Navbar({ onToggleSidebar }: NavbarProps) {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-            <span className="sr-only">Notifications</span>
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-5 w-5" />
-            <span className="sr-only">Settings</span>
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <User className="h-5 w-5" />
-            <span className="sr-only">Profile</span>
-          </Button>
+          <ThemeToggle />
         </div>
       </div>
     </header>
