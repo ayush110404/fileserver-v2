@@ -156,25 +156,6 @@ export function FileActions({
             <Upload className="h-4 w-4 mr-2" />
             Upload
           </Button>
-          
-          <div className="hidden group-hover:flex flex-col absolute z-10 mt-1 bg-white dark:bg-slate-900 border rounded-md shadow-lg">
-            <Button 
-              variant="ghost" 
-              className="justify-start rounded-none hover:bg-slate-100 dark:hover:bg-slate-800"
-              onClick={() => handleFileInputClick(multipleFileInputRef)}
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              Select Files
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="justify-start rounded-none hover:bg-slate-100 dark:hover:bg-slate-800"
-              onClick={() => handleFileInputClick(folderInputRef)}
-            >
-              <FolderUp className="h-4 w-4 mr-2" />
-              Upload Folder
-            </Button>
-          </div>
         </div>
         
         {/* Upload Dialog */}
